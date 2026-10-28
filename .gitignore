@@ -1,0 +1,7 @@
+data/
+src/*.class
+project.md
+*.class
+draft
+test.*
+LICENSE
