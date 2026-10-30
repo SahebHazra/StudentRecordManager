@@ -1,5 +1,5 @@
 package util;
-public class InvalidMarksException extends Exception {
+public class InvalidMarksException extends InvalidInputException {
     public InvalidMarksException(String message) {
         super(message);
     }

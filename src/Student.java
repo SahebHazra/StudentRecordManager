@@ -1,6 +1,6 @@
 import util.*;
 
-final public class Student {
+public class Student {
     private int ID;
     private String name;
     private String course;
@@ -9,7 +9,7 @@ final public class Student {
     private double marksOfSub3;
 
     public Student(int ID, String name, String course, Double marksOfSub1, Double marksOfSub2, Double marksOfSub3)
-            throws InvalidMarksException {
+            throws InvalidInputException {
         setID(ID);
         setName(name);
         setCourse(course);
@@ -18,38 +18,30 @@ final public class Student {
         setMarksOfSub3(marksOfSub3);
     }
 
-    private void setID(int ID) {
+    private void setID(int ID) throws InvalidInputException {
+        if (ID <= 0)
+            throw new InvalidInputException("ID should valid positive");
         this.ID = ID;
     }
 
-    public void setName(String name) throws IllegalArgumentException{
-        if (name == null || name.contains("null") || name.isBlank())
-            throw new IllegalArgumentException("Invalid Input for Name.");
-        this.name = name;
+    public void setName(String name) throws InvalidInputException {
+        this.name = InputChecker.stringChecker(name);
     }
 
-    public void setCourse(String course) throws IllegalArgumentException {
-        if (course == null || name.contains("null") || course.isBlank())
-            throw new IllegalArgumentException("Invalid Input for Course.");
-        this.course = course;
-    }
-
-    private Double marksChecker(Double marks) throws InvalidMarksException {
-        if (marks.isNaN() || marks.isInfinite() || marks < 0)
-            throw new InvalidMarksException("Marks should valid positive");
-        return marks;
+    public void setCourse(String course) throws InvalidInputException {
+        this.course = InputChecker.stringChecker(course);
     }
 
     public void setMarksOfSub1(Double marksOfSub1) throws InvalidMarksException {
-        this.marksOfSub1 = marksChecker(marksOfSub1);
+        this.marksOfSub1 = InputChecker.marksChecker(marksOfSub1);
     }
 
     public void setMarksOfSub2(Double marksOfSub2) throws InvalidMarksException {
-        this.marksOfSub2 = marksChecker(marksOfSub2);
+        this.marksOfSub2 = InputChecker.marksChecker(marksOfSub2);
     }
 
     public void setMarksOfSub3(Double marksOfSub3) throws InvalidMarksException {
-        this.marksOfSub3 = marksChecker(marksOfSub3);
+        this.marksOfSub3 = InputChecker.marksChecker(marksOfSub3);
     }
 
     public int getID() {
@@ -78,7 +70,7 @@ final public class Student {
 
     @Override
     public String toString() {
-        return "[ " + ID + " ] - " + name + "  " + course + "  " + marksOfSub1 + "  " + marksOfSub2 + "  "
-                + marksOfSub3;
+        return "[ " + ID + " ] - " + name + "   " + course + "     " + marksOfSub1 + "     "
+                + marksOfSub2 + "    " + marksOfSub3;
     }
 }
