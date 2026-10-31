@@ -109,10 +109,8 @@ public class StudentService {
             Student student = studentMap.get(id);
             String oldCourse = student.getCourse();
             student.setCourse(newCourse);
-            if (!oldCourse.equalsIgnoreCase(student.getCourse())) {
-                System.out.println("here");
+            if (!oldCourse.equalsIgnoreCase(student.getCourse()))
                 return storage.updateRecordsAccodingToMap(studentMap.values());
-            }
         } else
             System.out.println("Id not Match");
 
