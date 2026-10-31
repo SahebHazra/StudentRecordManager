@@ -37,7 +37,7 @@ public class StudentStorage {
     private File writeHeaderIfNotPresent(String record) throws IOException {
         File file = createFileIfNotExist(record);
         try (Scanner fileScanner = new Scanner(file)) {
-            if (!fileScanner.hasNextLine()) {
+            if (!fileScanner.hasNextLine() || (fileScanner.hasNextLine() && fileScanner.nextLine().isBlank())) {
                 try (FileWriter writer = new FileWriter(file)) {
                     writer.write("ID,Name,Course,Marks_1,Marks_2,Marks_3" + System.lineSeparator());
                 }
@@ -117,6 +117,7 @@ public class StudentStorage {
     public void saveCurrentRecord(Student student) throws IOException {
 
         // id, name, course, marksOfSub1, marksOfSub2, marksOfSub3
+        createFileIfNotExist(STUDENT_RECORD).delete();
         try (FileWriter writer = new FileWriter(writeHeaderIfNotPresent(STUDENT_RECORD), true)) {
             int newID = student.getID();
             writer.write(Integer.toString(newID) + "|" + student.getName() + "|" + student.getCourse() + "|"

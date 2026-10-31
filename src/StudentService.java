@@ -124,25 +124,33 @@ public class StudentService {
         return Double.NaN;
     }
 
-    private void showGradesofSubjectsMarks(double subjectMarks_1, double subjectMarks_2, double subjectMarks_3) {
-        Double[] marksArr = { subjectMarks_1, subjectMarks_2, subjectMarks_3 };
+    private void showGradesofSubjectsMarks(int id) {
+        if (!studentMap.containsKey(id)) {
+            System.out.println("ID not Match!");
+            return;
+        }
+        Student student = studentMap.get(id);
+        Double[] marksArr = { student.getMarksOfSub1(), student.getMarksOfSub2(), student.getMarksOfSub3() };
+
         for (int i = 0; i < marksArr.length; i++) {
             double marks = marksArr[i];
+            StringBuilder grade = new StringBuilder();
             if (marks < 40) {
-                System.out.println("Marks in Subject_" + i + 1 + " : " + marks + ", Grade : F");
+                grade.replace(0, 1, "F");
             } else if (marks >= 40 && marks <= 49) {
-                System.out.println("Marks in Subject_" + i + 1 + " : " + marks + ", Grade : D");
+                grade.replace(0, 1, "D");
             } else if (marks > 49 && marks <= 59) {
-                System.out.println("Marks in Subject_" + i + 1 + " : " + marks + ", Grade : C");
+                grade.replace(0, 1, "C");
             } else if (marks > 59 && marks <= 69) {
-                System.out.println("Marks in Subject_" + i + 1 + " : " + marks + ", Grade : B");
+                grade.replace(0, 1, "B");
             } else if (marks > 69 && marks <= 79) {
-                System.out.println("Marks in Subject_" + i + 1 + " : " + marks + ", Grade : A");
+                grade.replace(0, 1, "A");
             } else if (marks > 79 && marks <= 90) {
-                System.out.println("Marks in Subject_" + i + 1 + " : A" + marks + ", Grade : +");
+                grade.replace(0, 1, "A+");
             } else if (marks > 90 && marks <= 100) {
-                System.out.println("Marks in Subject_" + i + 1 + " : " + marks + ", Grade : O");
+                grade.replace(0, 1, "O");
             }
+            System.out.println("Marks in Subject_" + i + 1 + " : " + marks + ", Grade : " + grade);
         }
     }
 
@@ -157,30 +165,33 @@ public class StudentService {
             System.out.println("Encounter with \'INVALID\' Informations");
             return;
         }
-
+        StringBuilder grade = new StringBuilder();
         if (total < 120) {
-            System.out.println("Total Marks : " + total + ", Average : " + total / 3 + ", Grade in Total : F");
-            showGradesofSubjectsMarks(student.getMarksOfSub1(), student.getMarksOfSub2(), student.getMarksOfSub3());
+            grade.replace(0, 1, "F");
         } else if (total >= 120 && total <= 147) {
-            System.out.println("Total Marks :" + total + ", Average : " + total / 3 + ", Grade in Total : D");
-            showGradesofSubjectsMarks(student.getMarksOfSub1(), student.getMarksOfSub2(), student.getMarksOfSub3());
+            grade.replace(0, 1, "D");
         } else if (total > 147 && total <= 177) {
-            System.out.println("Total Marks :" + total + ", Average : " + total / 3 + ", Grade in Total : C");
-            showGradesofSubjectsMarks(student.getMarksOfSub1(), student.getMarksOfSub2(), student.getMarksOfSub3());
+            grade.replace(0, 1, "C");
         } else if (total > 177 && total <= 207) {
-            System.out.println("Total Marks :" + total + ", Average : " + total / 3 + ", Grade in Total : B");
-            showGradesofSubjectsMarks(student.getMarksOfSub1(), student.getMarksOfSub2(), student.getMarksOfSub3());
+            grade.replace(0, 1, "B");
         } else if (total > 207 && total <= 237) {
-            System.out.println("Total Marks :" + total + ", Average : " + total / 3 + ", Grade in Total : A");
-            showGradesofSubjectsMarks(student.getMarksOfSub1(), student.getMarksOfSub2(), student.getMarksOfSub3());
+            grade.replace(0, 1, "A");
         } else if (total > 237 && total <= 267) {
-            System.out.println(" Total :" + total + ", Average : " + total / 3 + ", Grade in Total : A");
-            showGradesofSubjectsMarks(student.getMarksOfSub1(), student.getMarksOfSub2(), student.getMarksOfSub3());
+            grade.replace(0, 1, "A+");
         } else if (total > 267 && total <= 300) {
-            System.out.println("Total Marks :" + total + ", Average : " + total / 3 + ", Grade in Total : O");
-            showGradesofSubjectsMarks(student.getMarksOfSub1(), student.getMarksOfSub2(), student.getMarksOfSub3());
-        } else
+            grade.replace(0, 1, "O");
+        } else {
             System.out.println("Encounter with \'INVALID\' Informations");
+            return;
+        }
+        System.out.println(studentMap.get(id).getName() + " : " + studentMap.get(id).getCourse());
+        System.out.println("Total Marks : " + total + ", Average : " + total / 3 + ", Grade in Total : " + grade);
+        showGradesofSubjectsMarks(id);
+        System.out.println();
     }
 
+    public void showGradeBreackDownOfAllStudent() {
+        System.out.println("All Students Grade Info : ");
+        studentMap.keySet().stream().forEach(id -> showGradeforStudent(id));
+    }
 }

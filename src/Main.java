@@ -12,8 +12,9 @@ class Menu {
         System.out.println("3: Search student    ");
         System.out.println("4: Update student    ");
         System.out.println("5: Delete student    ");
-        System.out.println("6: Marks BrakeDown with greade ");
-        System.out.println("7: Exit              ");
+        System.out.println("6: Marks BrakeDown for Student ID");
+        System.out.println("7: Show All Student's Marks Grade");
+        System.out.println("8: Exit              ");
     }
 }
 
@@ -25,7 +26,6 @@ public class Main {
     public static void main() {
 
         StudentService service = null;
-
         try {
             service = new StudentService(new StudentStorage());
         } catch (Exception e) {
@@ -66,9 +66,9 @@ public class Main {
                 try {
                     System.out.print("Enter marks of sub-1 : ");
                     Double marks_1 = NumberValidator.forDouble(sc);
-                    System.out.print("\nEnter marks of sub-2 : ");
+                    System.out.print("Enter marks of sub-2 : ");
                     Double marks_2 = NumberValidator.forDouble(sc);
-                    System.out.print("\nEnter marks of sub-3 : ");
+                    System.out.print("Enter marks of sub-3 : ");
                     Double marks_3 = NumberValidator.forDouble(sc);
 
                     if (service.addRecord(name, course, marks_1, marks_2, marks_3))
@@ -95,7 +95,7 @@ public class Main {
 
                 switch (optionForSearch) {
                     case "1" -> {
-                        System.out.println("Enter id : ");
+                        System.out.print("Enter id : ");
                         int id = NumberValidator.forInt(sc);
                         service.searchStudent(id);
                     }
@@ -111,18 +111,20 @@ public class Main {
                 System.out.println("2: Marks of Subject-1 \n3: Marks of Subject-2");
                 String optionForUpdate = getInput("4: Marks of Subject-3 \nChoose : ");
 
-                System.out.print("Enter ID : ");
-                int id = NumberValidator.forInt(sc);
-
                 if (optionForUpdate.equals("1")) {
+                    System.out.print("Enter ID : ");
+                    int id = NumberValidator.forInt(sc);
                     if (service.updateStudentDetails(id, getInput("Enter Course Name : ")))
                         System.out.println("Updated Sucessfully");
                     else
                         System.out.println("Failed to update");
                 } else {
-                    System.out.println("Enter Marks: ");
-                    double marks = NumberValidator.forDouble(sc);
+
                     if (optionForUpdate.equals("2") || optionForUpdate.equals("3") || optionForUpdate.equals("4")) {
+                        System.out.print("Enter ID : ");
+                        int id = NumberValidator.forInt(sc);
+                        System.out.println("Enter Marks: ");
+                        double marks = NumberValidator.forDouble(sc);
                         if (service.updateStudentDetails(id, marks, Integer.parseInt(optionForUpdate) - 1))
                             System.out.println("Updated Sucessfully");
                         else
@@ -145,7 +147,9 @@ public class Main {
                 int id = NumberValidator.forInt(sc);
                 service.showGradeforStudent(id);
             }
-            case "7" -> {
+            case "7" -> service.showGradeBreackDownOfAllStudent();
+
+            case "8" -> {
                 System.out.println("See you next time!");
                 isEnd = true;
             }
