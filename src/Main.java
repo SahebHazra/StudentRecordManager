@@ -66,9 +66,9 @@ public class Main {
                 try {
                     System.out.print("Enter marks of sub-1 : ");
                     Double marks_1 = NumberValidator.forDouble(sc);
-                    System.out.println("Enter marks of sub-2 : ");
+                    System.out.print("\nEnter marks of sub-2 : ");
                     Double marks_2 = NumberValidator.forDouble(sc);
-                    System.out.println("Enter marks of sub-3 : ");
+                    System.out.print("\nEnter marks of sub-3 : ");
                     Double marks_3 = NumberValidator.forDouble(sc);
 
                     if (service.addRecord(name, course, marks_1, marks_2, marks_3))
@@ -78,7 +78,6 @@ public class Main {
                 } catch (NumberFormatException e) {
                     throw new InvalidMarksException("Please ener valid marks");
                 }
-
             }
 
             case "2" -> {
@@ -131,7 +130,6 @@ public class Main {
                     } else
                         System.out.println("Invalid Option!");
                 }
-
             }
             case "5" -> {
                 // Delete student
@@ -143,22 +141,15 @@ public class Main {
             }
             case "6" -> {
                 // Marks BrakeDown with greade
-                // - Average: sum of marks divided by 3.
-                // - Grade: define your own documented grading scale, for example A (80+), B
-                // (60–79.99), C (40–59.99), F (below 40).
-
+                System.out.print("Enter Id :");
+                int id = NumberValidator.forInt(sc);
+                service.showGradeforStudent(id);
             }
-
-            // System.out.println("4: Update student
-
             case "7" -> {
                 System.out.println("See you next time!");
                 isEnd = true;
             }
-
-            // default ->{
-
-            // }
+            default -> System.out.println("Invalid input, please enter between [1-7]");
         }
 
     }

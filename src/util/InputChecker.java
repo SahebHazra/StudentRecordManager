@@ -12,7 +12,7 @@ public class InputChecker {
         if (marks.isNaN() || marks.isInfinite() || marks < 0)
             throw new InvalidMarksException("Marks should valid positive");
         else if (marks > 100)
-            throw new InvalidMarksException("Marks should be lower then 100");
+            throw new InvalidMarksException("Marks should not higher then 100");
 
         return marks;
     }

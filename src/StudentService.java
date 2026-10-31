@@ -57,97 +57,130 @@ public class StudentService {
 
     public boolean updateStudentDetails(int id, double marks, int forSubjectIndex)
             throws NumberFormatException, InvalidMarksException, IOException {
-        double oldMark;
-        boolean isSame = false;
+
         if (studentMap.containsKey(id)) {
             Student student = studentMap.get(id);
+            boolean isSame = false;
+            double oldMark;
             if (forSubjectIndex == 1) {
                 oldMark = student.getMarksOfSub1();
                 student.setMarksOfSub1(marks);
-                isSame = oldMark != student.getMarksOfSub1();
+                isSame = oldMark == student.getMarksOfSub1();
             } else if (forSubjectIndex == 2) {
                 oldMark = student.getMarksOfSub2();
                 student.setMarksOfSub1(marks);
-                isSame = oldMark != student.getMarksOfSub2();
+                isSame = oldMark == student.getMarksOfSub2();
             } else if (forSubjectIndex == 3) {
                 oldMark = student.getMarksOfSub3();
                 student.setMarksOfSub1(marks);
-                isSame = oldMark != student.getMarksOfSub3();
+                isSame = oldMark == student.getMarksOfSub3();
+            }
+            if (!isSame) {
+                storage.updateRecordsAccodingToMap(studentMap.values());
+                return true;
             }
         } else
             System.out.println("Id not Match");
-        if (isSame)
-            storage.updateRecordsAccodingToMap(studentMap.values());
-        return isSame;
+
+        return false;
     }
 
     public boolean updateStudentDetails(int id, String newCourse) throws IOException, InvalidInputException {
-        boolean isSame = true;
         if (studentMap.containsKey(id)) {
             Student student = studentMap.get(id);
             String oldCourse = student.getCourse();
             student.setCourse(newCourse);
-            isSame = oldCourse.equalsIgnoreCase(student.getCourse()); // diffrent returns false
+            if (!oldCourse.equalsIgnoreCase(student.getCourse())) {
+                System.out.println("here");
+                storage.updateRecordsAccodingToMap(studentMap.values());
+                return true;
+            }
         } else
             System.out.println("Id not Match");
 
-        if (!isSame)
-            storage.updateRecordsAccodingToMap(studentMap.values());
-
-        return !isSame;
+        return false;
     }
 
     public boolean deleteStudent(int id) throws IOException {
-        if (studentMap.containsKey(id))
+        if (studentMap.containsKey(id)) {
             studentMap.remove(id);
-        boolean isPresent = studentMap.containsKey(id);
-        if (!isPresent)
-            storage.updateRecordsAccodingToMap(studentMap.values());
-
-        return isPresent;
+            if (!studentMap.containsKey(id)) {
+                storage.updateRecordsAccodingToMap(studentMap.values());
+                return true;
+            }
+        }
+        System.out.println("ID not match!");
+        return false;
     }
 
-    public Double getMarksTotalOfStudent(int id) {
+    private Double getTotalMarksForStudent(int id) {
         if (studentMap.containsKey(id)) {
             Student student = studentMap.get(id);
             double marksOfSub1 = student.getMarksOfSub1();
             double marksOfSub2 = student.getMarksOfSub2();
             double marksOfSub3 = student.getMarksOfSub3();
-
-            System.out.println("Total");
             return marksOfSub1 + marksOfSub2 + marksOfSub3;
         }
         return Double.NaN;
     }
 
-    public Double getMarksAverageOfStudent(int id) {
-        Double total = getMarksTotalOfStudent(id);
-        if (!total.isNaN())
-            return total / 3;
-        return total;
+    private void showGradesofSubjectsMarks(double subjectMarks_1, double subjectMarks_2, double subjectMarks_3) {
+        Double[] marksArr = { subjectMarks_1, subjectMarks_2, subjectMarks_3 };
+        for (int i = 0; i < marksArr.length; i++) {
+            double marks = marksArr[i];
+            if (marks < 40) {
+                System.out.println("Marks in Subject_" + i + 1 + " : " + marks + ", Grade : F");
+            } else if (marks >= 40 && marks <= 49) {
+                System.out.println("Marks in Subject_" + i + 1 + " : " + marks + ", Grade : D");
+            } else if (marks > 49 && marks <= 59) {
+                System.out.println("Marks in Subject_" + i + 1 + " : " + marks + ", Grade : C");
+            } else if (marks > 59 && marks <= 69) {
+                System.out.println("Marks in Subject_" + i + 1 + " : " + marks + ", Grade : B");
+            } else if (marks > 69 && marks <= 79) {
+                System.out.println("Marks in Subject_" + i + 1 + " : " + marks + ", Grade : A");
+            } else if (marks > 79 && marks <= 90) {
+                System.out.println("Marks in Subject_" + i + 1 + " : A" + marks + ", Grade : +");
+            } else if (marks > 90 && marks <= 100) {
+                System.out.println("Marks in Subject_" + i + 1 + " : " + marks + ", Grade : O");
+            }
+        }
     }
 
-
-    public void greadeChart(int id){
-        //  A (80+), B(60–79.99), C (40–59.99), F (below 40).
-
-        // Total= 270 - 300; Average = 150; perSubject=90 - 100; = O
-        // Total= 240 - 267; Average = 150; perSubject=80 - 89; = A+
-        // Total= 210 - 237; Average = 150; perSubject=70 - 79; = A
-        // Total= 180 - 207; Average = 150; perSubject=60 - 69; = B
-        // Total= 150 - 177; Average = 150; perSubject=50 - 59; = C
-        // Total= 120 - 147; Average = 150; perSubject=40 - 49; = D
-        // Total= < 120; Average = 150; perSubject= < 40; = F
-
-
-        double total = getMarksTotalOfStudent(id);
-        if (total < 40 ) {
-            
+    public void showGradeforStudent(int id) {
+        if (!studentMap.containsKey(id)) {
+            System.out.println("ID NOT MATCH!");
+            return;
+        }
+        Student student = studentMap.get(id);
+        Double total = getTotalMarksForStudent(id);
+        if (total.isNaN()) {
+            System.out.println("Encounter with \'INVALID\' Informations");
+            return;
         }
 
-        
-
+        if (total < 120) {
+            System.out.println("Total Marks : " + total + ", Average : " + total / 3 + ", Grade in Total : F");
+            showGradesofSubjectsMarks(student.getMarksOfSub1(), student.getMarksOfSub2(), student.getMarksOfSub3());
+        } else if (total >= 120 && total <= 147) {
+            System.out.println("Total Marks :" + total + ", Average : " + total / 3 + ", Grade in Total : D");
+            showGradesofSubjectsMarks(student.getMarksOfSub1(), student.getMarksOfSub2(), student.getMarksOfSub3());
+        } else if (total > 147 && total <= 177) {
+            System.out.println("Total Marks :" + total + ", Average : " + total / 3 + ", Grade in Total : C");
+            showGradesofSubjectsMarks(student.getMarksOfSub1(), student.getMarksOfSub2(), student.getMarksOfSub3());
+        } else if (total > 177 && total <= 207) {
+            System.out.println("Total Marks :" + total + ", Average : " + total / 3 + ", Grade in Total : B");
+            showGradesofSubjectsMarks(student.getMarksOfSub1(), student.getMarksOfSub2(), student.getMarksOfSub3());
+        } else if (total > 207 && total <= 237) {
+            System.out.println("Total Marks :" + total + ", Average : " + total / 3 + ", Grade in Total : A");
+            showGradesofSubjectsMarks(student.getMarksOfSub1(), student.getMarksOfSub2(), student.getMarksOfSub3());
+        } else if (total > 237 && total <= 267) {
+            System.out.println(" Total :" + total + ", Average : " + total / 3 + ", Grade in Total : A");
+            showGradesofSubjectsMarks(student.getMarksOfSub1(), student.getMarksOfSub2(), student.getMarksOfSub3());
+        } else if (total > 267 && total <= 300) {
+            System.out.println("Total Marks :" + total + ", Average : " + total / 3 + ", Grade in Total : O");
+            showGradesofSubjectsMarks(student.getMarksOfSub1(), student.getMarksOfSub2(), student.getMarksOfSub3());
+        } else
+            System.out.println("Encounter with \'INVALID\' Informations");
     }
-
 
 }
