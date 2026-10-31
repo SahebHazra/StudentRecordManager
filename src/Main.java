@@ -33,18 +33,20 @@ public class Main {
             e.printStackTrace();
         }
 
-        while (!isEnd) {
-            try {
-                System.out.println();
-                Menu.showMenu();
-                System.out.print("Choose : ");
-                runMenu(sc.nextLine().trim(), service);
-            } catch (NumberFormatException | InvalidInputException | IOException e) {
-                System.out.println(e);
-                // e.printStackTrace();
+        if (service != null) {
+            while (!isEnd) {
+                try {
+                    System.out.println();
+                    Menu.showMenu();
+                    System.out.print("Choose : ");
+                    runMenu(sc.nextLine().trim(), service);
+                } catch (NumberFormatException | InvalidInputException | IOException e) {
+                    System.out.println(e);
+                    // e.printStackTrace();
+                }
             }
-        }
-
+        } else
+            System.out.println("StudentService object is not createed");
     }
 
     public static String getInput(String message) {
@@ -153,7 +155,7 @@ public class Main {
                 System.out.println("See you next time!");
                 isEnd = true;
             }
-            default -> System.out.println("Invalid input, please enter between [1-7]");
+            default -> System.out.println("Invalid input, please enter between [1-8]");
         }
 
     }
