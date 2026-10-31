@@ -108,7 +108,7 @@ public class StudentStorage {
 
         // Write all record accoding to the provided record
 
-        File oldFile = new File(PATH + "/" + STUDENT_RECORD);
+        File oldFile = createFileIfNotExist(STUDENT_RECORD);
         File tempFile = writeHeaderIfNotPresent(STUDENT_RECORD + ".tmp");
 
         try (FileWriter writer = new FileWriter(tempFile, true)) {

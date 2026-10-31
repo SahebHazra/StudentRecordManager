@@ -157,7 +157,6 @@ public class Main {
             }
             default -> System.out.println("Invalid input, please enter between [1-8]");
         }
-
     }
 
 }
