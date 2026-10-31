@@ -12,7 +12,6 @@ import util.InvalidMarksException;
 public class StudentStorage {
     private final String PATH = "data";
     private final String STUDENT_RECORD = "student_records.csv";
-    private final String LAST_ID = "last_unique_id.txt";
 
     public StudentStorage() throws IOException {
         createPATHifNotExist(PATH);
@@ -49,10 +48,9 @@ public class StudentStorage {
     public Map<Integer, Student> getPreviousRecords() throws IOException, InvalidInputException {
 
         Map<Integer, Student> studentMap = new HashMap<>();
+        boolean needToRewriteTheRecord = false;
         try (Scanner fileScanner = new Scanner(createFileIfNotExist(STUDENT_RECORD))) {
             int lineNumber = -1;
-            boolean needToRewriteTheRecord = false;
-
             while (fileScanner.hasNextLine()) {
                 lineNumber++;
                 String line = fileScanner.nextLine();
@@ -87,31 +85,11 @@ public class StudentStorage {
                     continue;
                 }
             }
-            if (needToRewriteTheRecord)
-                updateRecordsAccodingToMap(studentMap.values());
         }
+        if (needToRewriteTheRecord)
+            updateRecordsAccodingToMap(studentMap.values());
 
         return studentMap;
-    }
-
-    public int getLastId() throws IOException {
-        int id = 100;
-        int newid = id;
-        try (Scanner fileScaner = new Scanner(createFileIfNotExist(LAST_ID))) {
-            if (fileScaner.hasNextInt())
-                newid = fileScaner.nextInt();
-        }
-        return (newid > id) ? newid : id;
-    }
-
-    private void storeId(int newId) throws IOException {
-        int oldId = getLastId();
-        // if old ID is smaller and new ID is greater | only then store the new ID;
-        if (oldId < newId) {
-            try (FileWriter writer = new FileWriter(createFileIfNotExist(LAST_ID))) {
-                writer.write(Integer.toString(newId));
-            }
-        }
     }
 
     public boolean saveCurrentRecord(Student student) throws IOException {
@@ -122,30 +100,35 @@ public class StudentStorage {
             writer.write(Integer.toString(newID) + "," + student.getName() + "," + student.getCourse() + ","
                     + String.valueOf(student.getMarksOfSub1()) + "," + String.valueOf(student.getMarksOfSub2())
                     + "," + String.valueOf(student.getMarksOfSub3()) + System.lineSeparator());
-
-            storeId(newID);
         }
         return true;
     }
 
-    public void updateRecordsAccodingToMap(Collection<Student> studentRecords) throws IOException {
+    public boolean updateRecordsAccodingToMap(Collection<Student> studentRecords) throws IOException {
 
         // Write all record accoding to the provided record
-        new File(PATH + "/" + STUDENT_RECORD).delete(); // why it not get delete the old data
 
-        try (FileWriter writer = new FileWriter(writeHeaderIfNotPresent(STUDENT_RECORD), true)) {
-            int storeID = getLastId();
+        File oldFile = new File(PATH + "/" + STUDENT_RECORD);
+        File tempFile = writeHeaderIfNotPresent(STUDENT_RECORD + ".tmp");
+
+        try (FileWriter writer = new FileWriter(tempFile, true)) {
+            // int storeID = getLastId();
             for (Student student : studentRecords) {
-                int newID = student.getID();
-                writer.write(Integer.toString(newID) + "," + student.getName() + "," + student.getCourse() + ","
+                writer.write(Integer.toString(student.getID()) + "," + student.getName() + "," + student.getCourse()
+                        + ","
                         + String.valueOf(student.getMarksOfSub1()) + "," + String.valueOf(student.getMarksOfSub2())
                         + "," + String.valueOf(student.getMarksOfSub3()) + System.lineSeparator());
-
-                if (storeID < newID)
-                    storeID = newID;
             }
-            storeId(storeID);
         }
+
+        if (!oldFile.delete()) {
+            throw new IOException("Fail to delete old data File");
+        } else {
+            if (!tempFile.renameTo(oldFile))
+                throw new IOException("Fail to rename new data file");
+        }
+        return true;
+
     }
 
 }

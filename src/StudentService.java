@@ -111,8 +111,7 @@ public class StudentService {
             student.setCourse(newCourse);
             if (!oldCourse.equalsIgnoreCase(student.getCourse())) {
                 System.out.println("here");
-                storage.updateRecordsAccodingToMap(studentMap.values());
-                return true;
+                return storage.updateRecordsAccodingToMap(studentMap.values());
             }
         } else
             System.out.println("Id not Match");
@@ -124,8 +123,7 @@ public class StudentService {
         if (studentMap.containsKey(id)) {
             studentMap.remove(id);
             if (!studentMap.containsKey(id)) {
-                storage.updateRecordsAccodingToMap(studentMap.values());
-                return true;
+                return storage.updateRecordsAccodingToMap(studentMap.values());
             }
         }
         System.out.println("ID not match!");
