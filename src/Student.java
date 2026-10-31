@@ -26,7 +26,7 @@ public class Student {
 
     // private checking method
     private static String checkStr(String input) throws InvalidInputException {
-        if (input == null || input.contains("null") || input.isBlank())
+        if (input == null || input.isBlank())
             throw new InvalidInputException("Invalid Input for \'" + input + "\'");
         return input;
     }
