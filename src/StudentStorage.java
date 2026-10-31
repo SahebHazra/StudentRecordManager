@@ -56,11 +56,10 @@ public class StudentStorage {
             while (fileScanner.hasNextLine()) {
                 lineNumber++;
                 String line = fileScanner.nextLine();
-                needToRewriteTheRecord = false;
                 if (lineNumber == 0 || line.isBlank())
                     continue;
 
-                String[] parts = line.split("\\|", 6);
+                String[] parts = line.split(",", 6);
                 if (parts.length != 6 || parts[1] == null || parts[2] == null) {
                     System.out.println("\nInvalid task record at line " + lineNumber + ".");
                     System.out.println("Skipping the problematic line!");
@@ -91,6 +90,7 @@ public class StudentStorage {
             if (needToRewriteTheRecord)
                 updateRecordsAccodingToMap(studentMap.values());
         }
+
         return studentMap;
     }
 
@@ -114,30 +114,32 @@ public class StudentStorage {
         }
     }
 
-    public void saveCurrentRecord(Student student) throws IOException {
+    public boolean saveCurrentRecord(Student student) throws IOException {
 
         // id, name, course, marksOfSub1, marksOfSub2, marksOfSub3
         try (FileWriter writer = new FileWriter(writeHeaderIfNotPresent(STUDENT_RECORD), true)) {
             int newID = student.getID();
-            writer.write(Integer.toString(newID) + "|" + student.getName() + "|" + student.getCourse() + "|"
-                    + String.valueOf(student.getMarksOfSub1()) + "|" + String.valueOf(student.getMarksOfSub2())
-                    + "|" + String.valueOf(student.getMarksOfSub3()) + System.lineSeparator());
+            writer.write(Integer.toString(newID) + "," + student.getName() + "," + student.getCourse() + ","
+                    + String.valueOf(student.getMarksOfSub1()) + "," + String.valueOf(student.getMarksOfSub2())
+                    + "," + String.valueOf(student.getMarksOfSub3()) + System.lineSeparator());
 
             storeId(newID);
         }
+        return true;
     }
 
     public void updateRecordsAccodingToMap(Collection<Student> studentRecords) throws IOException {
 
         // Write all record accoding to the provided record
-        new File(PATH + "/" + STUDENT_RECORD).delete();
+        new File(PATH + "/" + STUDENT_RECORD).delete(); // why it not get delete the old data
+
         try (FileWriter writer = new FileWriter(writeHeaderIfNotPresent(STUDENT_RECORD), true)) {
             int storeID = getLastId();
             for (Student student : studentRecords) {
                 int newID = student.getID();
-                writer.write(Integer.toString(newID) + "|" + student.getName() + "|" + student.getCourse() + "|"
-                        + String.valueOf(student.getMarksOfSub1()) + "|" + String.valueOf(student.getMarksOfSub2())
-                        + "|" + String.valueOf(student.getMarksOfSub3()) + System.lineSeparator());
+                writer.write(Integer.toString(newID) + "," + student.getName() + "," + student.getCourse() + ","
+                        + String.valueOf(student.getMarksOfSub1()) + "," + String.valueOf(student.getMarksOfSub2())
+                        + "," + String.valueOf(student.getMarksOfSub3()) + System.lineSeparator());
 
                 if (storeID < newID)
                     storeID = newID;

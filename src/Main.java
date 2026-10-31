@@ -23,14 +23,14 @@ public class Main {
     private static final Scanner sc = new Scanner(System.in);
     private static boolean isEnd;
 
-    public static void main() {
+    public static void main(String[] args) {
 
         StudentService service = null;
         try {
             service = new StudentService(new StudentStorage());
-        } catch (Exception e) {
-            System.out.println("Failed to Load Record");
-            // e.printStackTrace();
+        } catch (IOException | InvalidInputException e) {
+            System.out.println("Failed to Load Record, " + e.getMessage());
+            e.printStackTrace();
         }
 
         while (!isEnd) {

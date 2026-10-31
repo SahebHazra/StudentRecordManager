@@ -1,6 +1,7 @@
 import java.io.IOException;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 
 import util.InvalidInputException;
 import util.InvalidMarksException;
@@ -14,18 +15,36 @@ public class StudentService {
     public StudentService(StudentStorage storage) throws IOException, InvalidInputException {
         this.storage = storage;
         studentMap = new HashMap<>(storage.getPreviousRecords());
-        ID = storage.getLastId() + 1;
+
+        Iterator<Integer> IdFromMap = studentMap.keySet().iterator();
+
+        if (IdFromMap.hasNext()) {
+            var newId = IdFromMap.next();
+            while (IdFromMap.hasNext()) {
+                int i = IdFromMap.next();
+                if (newId < i)
+                    newId = i;
+            }
+            ID = newId + 1;
+        } else
+            ID = 101;
+
+        // ID = storage.getLastId() + 1;
     }
 
     // If failed to add data | return false
     public boolean addRecord(String name, String course, double marksOfSub1, double marksOfSub2,
             double marksOfSub3) throws InvalidInputException, IOException {
 
-        Student student = new Student(ID++, name, course, marksOfSub1, marksOfSub2, marksOfSub3);
+        Student student = new Student(ID, name, course, marksOfSub1, marksOfSub2, marksOfSub3);
         studentMap.put(ID, student);
         if (studentMap.containsKey(ID)) {
-            storage.saveCurrentRecord(student);
-            return true;
+            if (storage.saveCurrentRecord(student)) {
+                ID++;
+                return true;
+            } else {
+                studentMap.remove(ID);
+            }
         }
         return false;
     }
@@ -68,11 +87,11 @@ public class StudentService {
                 isSame = oldMark == student.getMarksOfSub1();
             } else if (forSubjectIndex == 2) {
                 oldMark = student.getMarksOfSub2();
-                student.setMarksOfSub1(marks);
+                student.setMarksOfSub2(marks);
                 isSame = oldMark == student.getMarksOfSub2();
             } else if (forSubjectIndex == 3) {
                 oldMark = student.getMarksOfSub3();
-                student.setMarksOfSub1(marks);
+                student.setMarksOfSub3(marks);
                 isSame = oldMark == student.getMarksOfSub3();
             }
             if (!isSame) {
@@ -113,6 +132,25 @@ public class StudentService {
         return false;
     }
 
+    private String marksToGrade(double marks) {
+        if (marks <= 100 && marks >= 90) {
+            return "O";
+        } else if (marks >= 80) {
+            return "A+";
+        } else if (marks >= 70) {
+            return "A";
+        } else if (marks >= 60) {
+            return "B";
+        } else if (marks >= 50) {
+            return "C";
+        } else if (marks >= 40) {
+            return "D";
+        } else if (marks < 40 && marks >= 0) {
+            return "F";
+        }
+        return "INVALID Marks";
+    }
+
     public void showGradeforStudent(int id) {
         if (!studentMap.containsKey(id)) {
             System.out.println("ID NOT MATCH!");
@@ -127,30 +165,21 @@ public class StudentService {
             boolean isFail = false;
 
             Double[] marksArr = { average, marks1, marks2, marks3 };
-            StringBuilder grade = new StringBuilder();
+            String grade;
 
-            System.out.println("Name : " + student.getName() + "  -  Course : " + student.getCourse());
+            System.out.println("ID : " + id + "Name : " + student.getName() + "  -  Course : " + student.getCourse());
             System.out.print("Total Marks : " + total);
 
             for (int i = 0; i < marksArr.length; i++) {
                 double marks = marksArr[i];
-                if (marks <= 100 && marks >= 90) {
-                    grade.replace(0, 1, "O");
-                } else if (marks >= 80) {
-                    grade.replace(0, 1, "A+");
-                } else if (marks >= 70) {
-                    grade.replace(0, 1, "A");
-                } else if (marks >= 60) {
-                    grade.replace(0, 1, "B");
-                } else if (marks >= 50) {
-                    grade.replace(0, 1, "C");
-                } else if (marks >= 40) {
-                    grade.replace(0, 1, "D");
-                } else if (marks < 40 && marks >= 0) {
-                    grade.replace(0, 1, "F");
+                grade = marksToGrade(marks);
+                if (grade.equalsIgnoreCase("INVALID Marks")) {
+                    System.out.println(grade);
+                    return;
+                }
+
+                if (grade.equalsIgnoreCase("F")) {
                     isFail = true;
-                } else {
-                    System.out.println("INVALID Marks");
                 }
 
                 if (i == 0) {
