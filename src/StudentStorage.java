@@ -117,7 +117,6 @@ public class StudentStorage {
     public void saveCurrentRecord(Student student) throws IOException {
 
         // id, name, course, marksOfSub1, marksOfSub2, marksOfSub3
-        createFileIfNotExist(STUDENT_RECORD).delete();
         try (FileWriter writer = new FileWriter(writeHeaderIfNotPresent(STUDENT_RECORD), true)) {
             int newID = student.getID();
             writer.write(Integer.toString(newID) + "|" + student.getName() + "|" + student.getCourse() + "|"
@@ -131,7 +130,8 @@ public class StudentStorage {
     public void updateRecordsAccodingToMap(Collection<Student> studentRecords) throws IOException {
 
         // Write all record accoding to the provided record
-        try (FileWriter writer = new FileWriter(writeHeaderIfNotPresent(STUDENT_RECORD))) {
+        new File(PATH + "/" + STUDENT_RECORD).delete();
+        try (FileWriter writer = new FileWriter(writeHeaderIfNotPresent(STUDENT_RECORD), true)) {
             int storeID = getLastId();
             for (Student student : studentRecords) {
                 int newID = student.getID();

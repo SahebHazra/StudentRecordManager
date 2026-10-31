@@ -21,7 +21,7 @@ public class StudentService {
     public boolean addRecord(String name, String course, double marksOfSub1, double marksOfSub2,
             double marksOfSub3) throws InvalidInputException, IOException {
 
-        Student student = new Student(ID, name, course, marksOfSub1, marksOfSub2, marksOfSub3);
+        Student student = new Student(ID++, name, course, marksOfSub1, marksOfSub2, marksOfSub3);
         studentMap.put(ID, student);
         if (studentMap.containsKey(ID)) {
             storage.saveCurrentRecord(student);
@@ -113,83 +113,59 @@ public class StudentService {
         return false;
     }
 
-    private Double getTotalMarksForStudent(int id) {
-        if (studentMap.containsKey(id)) {
-            Student student = studentMap.get(id);
-            double marksOfSub1 = student.getMarksOfSub1();
-            double marksOfSub2 = student.getMarksOfSub2();
-            double marksOfSub3 = student.getMarksOfSub3();
-            return marksOfSub1 + marksOfSub2 + marksOfSub3;
-        }
-        return Double.NaN;
-    }
-
-    private boolean showGradesofSubjectsMarks(int id) {
-        if (!studentMap.containsKey(id)) {
-            System.out.println("ID not Match!");
-            return false;
-        }
-        Student student = studentMap.get(id);
-        Double[] marksArr = { student.getMarksOfSub1(), student.getMarksOfSub2(), student.getMarksOfSub3() };
-        StringBuilder grade = new StringBuilder();
-        for (int i = 0; i < marksArr.length; i++) {
-            double marks = marksArr[i];
-            if (marks < 40) {
-                grade.replace(0, 1, "F");
-            } else if (marks >= 40 && marks <= 49) {
-                grade.replace(0, 1, "D");
-            } else if (marks > 49 && marks <= 59) {
-                grade.replace(0, 1, "C");
-            } else if (marks > 59 && marks <= 69) {
-                grade.replace(0, 1, "B");
-            } else if (marks > 69 && marks <= 79) {
-                grade.replace(0, 1, "A");
-            } else if (marks > 79 && marks <= 90) {
-                grade.replace(0, 1, "A+");
-            } else if (marks > 90 && marks <= 100) {
-                grade.replace(0, 1, "O");
-            }
-            System.out.println("Marks in Subject_" + i + 1 + " : " + marks + ", Grade : " + grade);
-        }
-        return grade.toString().equalsIgnoreCase("F") ? false : true;
-    }
-
     public void showGradeforStudent(int id) {
         if (!studentMap.containsKey(id)) {
             System.out.println("ID NOT MATCH!");
             return;
-        }
-        Double total = getTotalMarksForStudent(id);
-        if (total.isNaN()) {
-            System.out.println("Encounter with \'INVALID\' Informations");
-            return;
-        }
-        StringBuilder grade = new StringBuilder();
-        if (total < 120) {
-            grade.replace(0, 1, "F");
-        } else if (total >= 120 && total <= 147) {
-            grade.replace(0, 1, "D");
-        } else if (total > 147 && total <= 177) {
-            grade.replace(0, 1, "C");
-        } else if (total > 177 && total <= 207) {
-            grade.replace(0, 1, "B");
-        } else if (total > 207 && total <= 237) {
-            grade.replace(0, 1, "A");
-        } else if (total > 237 && total <= 267) {
-            grade.replace(0, 1, "A+");
-        } else if (total > 267 && total <= 300) {
-            grade.replace(0, 1, "O");
         } else {
-            System.out.println("Encounter with \'INVALID\' Informations");
-            return;
+            Student student = studentMap.get(id);
+            Double marks1 = student.getMarksOfSub1();
+            Double marks2 = student.getMarksOfSub2();
+            Double marks3 = student.getMarksOfSub3();
+            Double total = marks1 + marks2 + marks3;
+            Double average = total / 3.0;
+            boolean isFail = false;
+
+            Double[] marksArr = { average, marks1, marks2, marks3 };
+            StringBuilder grade = new StringBuilder();
+
+            System.out.println("Name : " + student.getName() + "  -  Course : " + student.getCourse());
+            System.out.print("Total Marks : " + total);
+
+            for (int i = 0; i < marksArr.length; i++) {
+                double marks = marksArr[i];
+                if (marks <= 100 && marks >= 90) {
+                    grade.replace(0, 1, "O");
+                } else if (marks >= 80) {
+                    grade.replace(0, 1, "A+");
+                } else if (marks >= 70) {
+                    grade.replace(0, 1, "A");
+                } else if (marks >= 60) {
+                    grade.replace(0, 1, "B");
+                } else if (marks >= 50) {
+                    grade.replace(0, 1, "C");
+                } else if (marks >= 40) {
+                    grade.replace(0, 1, "D");
+                } else if (marks < 40 && marks >= 0) {
+                    grade.replace(0, 1, "F");
+                    isFail = true;
+                } else {
+                    System.out.println("INVALID Marks");
+                }
+
+                if (i == 0) {
+                    System.out.print(", Average Marks : ");
+                } else {
+                    System.out.print("Marks in Subject_" + i + " : ");
+                }
+                System.out.println(marks + ", Grade : " + grade);
+            }
+
+            if (isFail)
+                System.out.println("Status : FAILED\n");
+            else
+                System.out.println("Status : PASSED\n");
         }
-        Student student = studentMap.get(id);
-        System.out.println("Name : " + student.getName() + "  -  Course : " + student.getCourse());
-        System.out.println("Total Marks : " + total + ", Average : " + total / 3 + ", Grade in Total : " + grade);
-        if (showGradesofSubjectsMarks(id))
-            System.out.println("Status : PASSED\n");
-        else
-            System.out.println("Status : Failed\n");
     }
 
     public void showGradeBreackDownOfAllStudent() {
