@@ -24,26 +24,41 @@ public class Student {
         this.ID = ID;
     }
 
+    // private checking method
+    private static String checkStr(String input) throws InvalidInputException {
+        if (input == null || input.contains("null") || input.isBlank())
+            throw new InvalidInputException("Invalid Input for \'" + input + "\'");
+        return input;
+    }
+
+    private static Double checkMarks(Double marks) throws InvalidMarksException {
+        if (marks.isNaN() || marks.isInfinite() || marks < 0 || marks > 100)
+            throw new InvalidMarksException("Marks should in between (0-100)");
+        return marks;
+    }
+
+    // seters
     public void setName(String name) throws InvalidInputException {
-        this.name = InputChecker.stringChecker(name);
+        this.name = checkStr(name);
     }
 
     public void setCourse(String course) throws InvalidInputException {
-        this.course = InputChecker.stringChecker(course);
+        this.course = checkStr(course);
     }
 
     public void setMarksOfSub1(Double marksOfSub1) throws InvalidMarksException {
-        this.marksOfSub1 = InputChecker.marksChecker(marksOfSub1);
+        this.marksOfSub1 = checkMarks(marksOfSub1);
     }
 
     public void setMarksOfSub2(Double marksOfSub2) throws InvalidMarksException {
-        this.marksOfSub2 = InputChecker.marksChecker(marksOfSub2);
+        this.marksOfSub2 = checkMarks(marksOfSub2);
     }
 
     public void setMarksOfSub3(Double marksOfSub3) throws InvalidMarksException {
-        this.marksOfSub3 = InputChecker.marksChecker(marksOfSub3);
+        this.marksOfSub3 = checkMarks(marksOfSub3);
     }
 
+    // geters
     public int getID() {
         return ID;
     }

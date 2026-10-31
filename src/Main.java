@@ -30,16 +30,16 @@ public class Main {
             service = new StudentService(new StudentStorage());
         } catch (Exception e) {
             System.out.println("Failed to Load Record");
-            e.printStackTrace();
+            // e.printStackTrace();
         }
 
         while (!isEnd) {
             try {
+                System.out.println();
                 Menu.showMenu();
                 System.out.print("Choose : ");
                 runMenu(sc.nextLine().trim(), service);
-                System.out.println();
-            } catch (Exception e) {
+            } catch (NumberFormatException | InvalidInputException | IOException e) {
                 System.out.println(e);
                 // e.printStackTrace();
             }
@@ -49,7 +49,7 @@ public class Main {
 
     public static String getInput(String message) {
         System.out.print(message);
-        String str = sc.nextLine();
+        String str = sc.nextLine().trim();
         return str;
     }
 

@@ -56,7 +56,7 @@ public class StudentService {
     }
 
     public boolean updateStudentDetails(int id, double marks, int forSubjectIndex)
-            throws NumberFormatException, InvalidMarksException, IOException {
+            throws InvalidMarksException, IOException {
 
         if (studentMap.containsKey(id)) {
             Student student = studentMap.get(id);
@@ -124,17 +124,16 @@ public class StudentService {
         return Double.NaN;
     }
 
-    private void showGradesofSubjectsMarks(int id) {
+    private boolean showGradesofSubjectsMarks(int id) {
         if (!studentMap.containsKey(id)) {
             System.out.println("ID not Match!");
-            return;
+            return false;
         }
         Student student = studentMap.get(id);
         Double[] marksArr = { student.getMarksOfSub1(), student.getMarksOfSub2(), student.getMarksOfSub3() };
-
+        StringBuilder grade = new StringBuilder();
         for (int i = 0; i < marksArr.length; i++) {
             double marks = marksArr[i];
-            StringBuilder grade = new StringBuilder();
             if (marks < 40) {
                 grade.replace(0, 1, "F");
             } else if (marks >= 40 && marks <= 49) {
@@ -152,6 +151,7 @@ public class StudentService {
             }
             System.out.println("Marks in Subject_" + i + 1 + " : " + marks + ", Grade : " + grade);
         }
+        return grade.toString().equalsIgnoreCase("F") ? false : true;
     }
 
     public void showGradeforStudent(int id) {
@@ -159,7 +159,6 @@ public class StudentService {
             System.out.println("ID NOT MATCH!");
             return;
         }
-        Student student = studentMap.get(id);
         Double total = getTotalMarksForStudent(id);
         if (total.isNaN()) {
             System.out.println("Encounter with \'INVALID\' Informations");
@@ -184,10 +183,13 @@ public class StudentService {
             System.out.println("Encounter with \'INVALID\' Informations");
             return;
         }
-        System.out.println(studentMap.get(id).getName() + " : " + studentMap.get(id).getCourse());
+        Student student = studentMap.get(id);
+        System.out.println("Name : " + student.getName() + "  -  Course : " + student.getCourse());
         System.out.println("Total Marks : " + total + ", Average : " + total / 3 + ", Grade in Total : " + grade);
-        showGradesofSubjectsMarks(id);
-        System.out.println();
+        if (showGradesofSubjectsMarks(id))
+            System.out.println("Status : PASSED\n");
+        else
+            System.out.println("Status : Failed\n");
     }
 
     public void showGradeBreackDownOfAllStudent() {
